@@ -1,3 +1,6 @@
+import { server_rpc } from "./server";
+import { client_rpc } from "./client";
+
 interface Node {
 	instance?: Instance;
 }
@@ -7,12 +10,6 @@ const stack = new Array<Node>();
 function new_node(): Node {
 	const node = {};
 	stack.push(node);
-	return node;
-}
-
-export function host_events(root: Instance): Node {
-	const node = new_node();
-	node.instance = root;
 	return node;
 }
 
@@ -44,6 +41,12 @@ function create_events<
 	return mapped_events as MappedEvents<T>;
 }
 
+export function host_events(root: Instance): Node {
+	const node = new_node();
+	node.instance = root;
+	return node;
+}
+
 export function create_apis<
 	T extends {
 		[name: string]: (root: Instance) => { OnClientEvent: RBXScriptSignal } | { OnServerEvent: RBXScriptSignal };
@@ -51,3 +54,5 @@ export function create_apis<
 >(events: T): MappedEvents<T> {
 	return create_events(events);
 }
+
+export { server_rpc, client_rpc };
