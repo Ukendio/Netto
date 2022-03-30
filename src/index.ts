@@ -1,5 +1,6 @@
 import { server_rpc } from "./server";
 import { client_rpc } from "./client";
+import type { MappedEvents } from "./types";
 
 interface Node {
 	instance?: Instance;
@@ -12,19 +13,6 @@ function new_node(): Node {
 	stack.push(node);
 	return node;
 }
-
-type MappedEvents<
-	T extends {
-		[name: string]: <U extends Array<unknown>>(
-			root: Instance,
-			is_client: boolean,
-		) =>
-			| { OnClientEvent: RBXScriptSignal<(...params: U) => void> }
-			| { OnServerEvent: RBXScriptSignal<(...params: U) => void> };
-	},
-> = {
-	[K in keyof T]: ReturnType<T[K]>;
-};
 
 function create_events<
 	T extends {
