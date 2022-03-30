@@ -30,7 +30,7 @@ function create_events<
 	T extends {
 		[name: string]: (root: Instance) => { OnClientEvent: RBXScriptSignal } | { OnServerEvent: RBXScriptSignal };
 	},
->(events: T): LuaMetatable<MappedEvents<T>> & MappedEvents<T> & { (): void } {
+>(events: T): MappedEvents<T> & { (): void } {
 	const mapped_events = {} as { [index: string]: RemoteEvent };
 
 	for (const [name, fn] of pairs(events as unknown as Map<string, Callback>)) {
@@ -55,7 +55,7 @@ export function create_apis<
 	T extends {
 		[name: string]: (root: Instance) => { OnClientEvent: RBXScriptSignal } | { OnServerEvent: RBXScriptSignal };
 	},
->(events: T): MappedEvents<T> {
+>(events: T): MappedEvents<T> & { (): void } {
 	return create_events(events);
 }
 
