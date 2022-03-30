@@ -30,7 +30,7 @@ function create_events<
 	T extends {
 		[name: string]: (root: Instance) => { OnClientEvent: RBXScriptSignal } | { OnServerEvent: RBXScriptSignal };
 	},
->(events: T): MappedEvents<T> {
+>(events: T): LuaMetatable<MappedEvents<T>> & MappedEvents<T> & { (): void } {
 	const mapped_events = {} as { [index: string]: RemoteEvent };
 
 	for (const [name, fn] of pairs(events as unknown as Map<string, Callback>)) {
@@ -38,7 +38,11 @@ function create_events<
 		mapped_events[name] = fn(node.instance) as RemoteEvent;
 	}
 
-	return mapped_events as MappedEvents<T>;
+	return setmetatable(mapped_events, {
+		__call: () => {
+			print("initialized");
+		},
+	}) as MappedEvents<T> & { (): void };
 }
 
 export function host_events(root: Instance): Node {
